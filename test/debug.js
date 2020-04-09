@@ -3,20 +3,20 @@ const PreMasterSecret = require("../build/TLS/PreMasterSecret").PreMasterSecret;
 
 var dtls = require("../").dtls;
 
-const socket = dtls.createSocket({
-	type: "udp4",
-	address: "192.168.1.115", //192.168.1.115 // 127.0.0.1
-	port: 5684,
-	psk: { "Client_identity": "X9LStOPeYT3UZu5w" } // 58394c53744f5065595433555a753577
-})
-	.on("connected", () => {
-		console.log("secure connection established");
-		socket.send(Buffer.from("01020304", "hex"));
-	})
-	.on("error", (e) => console.error(`error: ${e.message}`))
-	.on("message", (msg) => console.log(`received message: ${msg}`))
-	.on("close", () => console.log("connection closed"))
-	;
+const socket = dtls
+  .createSocket({
+    type: "udp4",
+    address: "127.0.0.1", //192.168.1.115 // 127.0.0.1
+    port: 5684,
+    psk: { Client_identity: "X9LStOPeYT3UZu5w" }, // 58394c53744f5065595433555a753577
+  })
+  .on("connected", () => {
+    console.log("secure connection established");
+    socket.send(Buffer.from("01020304", "hex"));
+  })
+  .on("error", (e) => console.error(`error: ${e.message}`))
+  .on("message", (msg) => console.log(`received message: ${msg}`))
+  .on("close", () => console.log("connection closed"));
 
 /*
 openssl s_server -psk 58394c53744f5065595433555a753577 -dtls1_2 -accept 127.0.0.1:5684 -debug -msg -state -cipher PSK-AES128-CCM8 -nocert -no_ticket
@@ -105,7 +105,7 @@ actual     : d53613f7ef44a3c9da30f752
 //		client_write_IV: read(cipherSuite.Cipher.fixedIvLength),
 //		server_write_IV: read(cipherSuite.Cipher.fixedIvLength)
 //	};
-		
+
 //}
 
 //let handshakeMessages = "";
@@ -127,7 +127,6 @@ actual     : d53613f7ef44a3c9da30f752
 //handshakeHash = PRF_fn.hashFunction(Buffer.from(handshakeMessages, "hex"));
 //verify_data = PRF_fn(master_secret, `server finished`, handshakeHash, cipherSuite.verify_data_length);
 //console.log(`verify data: ${verify_data.toString("hex")}`);
-
 
 //20e2fad47444e47746b340a1
 
