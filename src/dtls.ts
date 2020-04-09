@@ -263,7 +263,7 @@ export namespace dtls {
     }
   }
 
-  export interface Options {
+  export type Options = {
     /** the type of the underlying socket */
     type: "udp4" | "udp6";
     /** ?? see NodeJS docs */
@@ -282,7 +282,7 @@ export namespace dtls {
      * All supported cipher suites are used if not specified otherwise.
      */
     ciphers?: (keyof typeof CipherSuites)[];
-  }
+  };
   /**
    * Checks if a given object adheres to the Options interface definition
    * Throws if it doesn't.
