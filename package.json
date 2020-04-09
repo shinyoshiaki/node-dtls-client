@@ -17,12 +17,9 @@
   "scripts": {
     "prebuild": "rimraf ./build",
     "build": "tsc",
-    "coverage": "node_modules/.bin/nyc npm test",
-    "coveralls": "node_modules/.bin/nyc report --reporter=text-lcov | coveralls -v",
     "release": "release-script",
-    "show-coverage": "npm run coverage && start ./coverage/index.html",
     "test": "npm run test:ts",
-    "test:ts": "node_modules/.bin/mocha",
+    "test:ts": "mocha",
     "watch": "tsc --watch",
     "format": "prettier --write src/**/*.ts"
   },
@@ -79,9 +76,6 @@
     "ts-node": "^8.0.3",
     "typescript": "^3.3.4000",
     "yargs": "^15.0.1"
-  },
-  "optionalDependencies": {
-    "node-aead-crypto": "^2.0.0"
   },
   "engines": {
     "node": ">=6"
