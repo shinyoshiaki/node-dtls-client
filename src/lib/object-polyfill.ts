@@ -7,11 +7,8 @@ export type KeyValuePair<T> = [string, T];
  */
 export function entries<T>(obj: Record<string, T>): KeyValuePair<T>[];
 export function entries(obj: any): KeyValuePair<any>[] {
-	return Object.keys(obj)
-		.map(key => [key, obj[key]] as KeyValuePair<any>)
-		;
-
-	}
+  return Object.keys(obj).map((key) => [key, obj[key]] as KeyValuePair<any>);
+}
 
 /**
  * Stellt einen Polyfill für Object.values bereit
@@ -19,9 +16,7 @@ export function entries(obj: any): KeyValuePair<any>[] {
  */
 export function values<T>(obj: Record<string, T>): T[];
 export function values(obj: any): any[] {
-	return Object.keys(obj)
-		.map(key => obj[key])
-		;
+  return Object.keys(obj).map((key) => obj[key]);
 }
 
 /**
@@ -29,13 +24,19 @@ export function values(obj: any): any[] {
  * @param obj Das Objekt, dessen Eigenschaften gefiltert werden sollen
  * @param predicate Die Filter-Funktion, die auf Eigenschaften angewendet wird
  */
-export function filter<T>(obj: Record<string, T>, predicate: Predicate<T>): Record<string, T>;
-export function filter(obj: any, predicate: Predicate<any>): Record<string, any> {
-	const ret: Record<string, any> = {};
-	for (const [key, val] of entries(obj)) {
-		if (predicate(val)) ret[key] = val;
-	}
-	return ret;
+export function filter<T>(
+  obj: Record<string, T>,
+  predicate: Predicate<T>
+): Record<string, T>;
+export function filter(
+  obj: any,
+  predicate: Predicate<any>
+): Record<string, any> {
+  const ret: Record<string, any> = {};
+  for (const [key, val] of entries(obj)) {
+    if (predicate(val)) ret[key] = val;
+  }
+  return ret;
 }
 
 /**
@@ -43,16 +44,19 @@ export function filter(obj: any, predicate: Predicate<any>): Record<string, any>
  * @param target - Das Zielobjekt, auf das die Eigenschaften übertragen werden sollen
  * @param source - Das Quellobjekt, aus dem die Eigenschaften kopiert werden sollen
  */
-export function extend<T1 extends Record<string, any>, T2 extends Record<string, any>>(target: T1, source: T2): Record<string, any> {
-	target = target || {} as T1;
-	for (const [prop, val] of entries(source)) {
-		if (val instanceof Object) {
-			// @ts-ignore This works, too much hassle to satisfy TS 3.5+
-			target[prop] = extend(target[prop], val);
-		} else {
-			// @ts-ignore This works, too much hassle to satisfy TS 3.5+
-			target[prop] = val;
-		}
-	}
-	return target;
+export function extend<
+  T1 extends Record<string, any>,
+  T2 extends Record<string, any>
+>(target: T1, source: T2): Record<string, any> {
+  target = target || ({} as T1);
+  for (const [prop, val] of entries(source)) {
+    if (val instanceof Object) {
+      // @ts-ignore This works, too much hassle to satisfy TS 3.5+
+      target[prop] = extend(target[prop], val);
+    } else {
+      // @ts-ignore This works, too much hassle to satisfy TS 3.5+
+      target[prop] = val;
+    }
+  }
+  return target;
 }

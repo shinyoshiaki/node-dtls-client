@@ -15,14 +15,13 @@ should();
 use(sinonChai);
 
 describe("conditional use of `node-aead-crypto` => ", () => {
-	if (isGteNode10) {
-		it("on NodeJS >= 10, `node-aead-crypto` should NOT be installed", () => {
-			expect(() => require.resolve("node-aead-crypto")).to.throw();
-		});
-
-	} else {
-		it("on NodeJS < 10, `node-aead-crypto` should be installed", () => {
-			expect(() => require.resolve("node-aead-crypto")).to.not.throw();
-		});
-	}
+  if (isGteNode10) {
+    it("on NodeJS >= 10, `node-aead-crypto` should NOT be installed", () => {
+      expect(() => require.resolve("node-aead-crypto")).to.throw();
+    });
+  } else {
+    it("on NodeJS < 10, `node-aead-crypto` should be installed", () => {
+      expect(() => require.resolve("node-aead-crypto")).to.not.throw();
+    });
+  }
 });

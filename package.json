@@ -23,7 +23,8 @@
     "show-coverage": "npm run coverage && start ./coverage/index.html",
     "test": "npm run test:ts",
     "test:ts": "node_modules/.bin/mocha",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "format": "prettier --write src/**/*.ts"
   },
   "nyc": {
     "all": true,
@@ -69,6 +70,7 @@
     "coveralls": "^3.0.0",
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
+    "prettier": "^2.0.4",
     "proxyquire": "^2.0.1",
     "rimraf": "^3.0.0",
     "sinon": "^9.0.0",

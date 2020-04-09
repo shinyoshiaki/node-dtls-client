@@ -4,11 +4,11 @@
  * @returns {number}
  */
 export function fitToWholeBytes(value: number): number {
-	let ret = 0;
-	while (value !== 0) {
-		ret++;
-		value >>>= 8;
-	}
-	if (ret === 0) ret++;
-	return ret;
+  let ret = 0;
+  while (value !== 0) {
+    ret++;
+    value >>>= 8;
+  }
+  if (ret === 0) ret++;
+  return ret;
 }
