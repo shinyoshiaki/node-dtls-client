@@ -1,5 +1,5 @@
 ﻿import { entries } from "../lib/object-polyfill";
-import { CipherSuite, CipherType, HashAlgorithm } from "../TLS/CipherSuite";
+import { CipherSuite } from "../TLS/CipherSuite";
 
 // block sizes etc. see https://tools.ietf.org/html/rfc5246 page 83
 export const CipherSuites = {

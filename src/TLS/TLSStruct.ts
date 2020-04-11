@@ -1,11 +1,7 @@
 ﻿import { BitSizes, bufferToNumber, numberToBuffer } from "../lib/BitConverter";
 import { entries } from "../lib/object-polyfill";
 import * as util from "../lib/util";
-import {
-  DeserializationResult,
-  ISerializable,
-  ISerializableConstructor,
-} from "./Serializable";
+import { DeserializationResult } from "./Serializable";
 import * as TypeSpecs from "./TypeSpecs";
 import { Vector } from "./Vector";
 

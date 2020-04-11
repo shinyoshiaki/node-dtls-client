@@ -2,8 +2,6 @@
 import { DTLSCiphertext } from "../DTLS/DTLSCiphertext";
 import { DTLSCompressed } from "../DTLS/DTLSCompressed";
 import {
-  CipherDelegate,
-  DecipherDelegate,
   GenericCipherDelegate,
   GenericDecipherDelegate,
   GenericMacDelegate,

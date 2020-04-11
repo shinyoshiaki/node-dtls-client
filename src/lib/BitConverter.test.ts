@@ -1,6 +1,5 @@
 ﻿import { expect } from "chai";
-
-import { BitSizes, bufferToNumber, numberToBuffer } from "./BitConverter";
+import { bufferToNumber, numberToBuffer } from "./BitConverter";
 
 const msg_data_mismatch =
   "Daten stimmen nicht mit dem erwarteten Ergebnis überein";

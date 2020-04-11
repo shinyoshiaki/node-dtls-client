@@ -2,11 +2,10 @@
 // tslint:disable:no-unused-expression
 // tslint:disable:variable-name
 
-import { assert, expect, should, use } from "chai";
-import { spy, stub } from "sinon";
+import { expect, should, use } from "chai";
+import * as semver from "semver";
 import * as sinonChai from "sinon-chai";
 
-import * as semver from "semver";
 const isGteNode10 = semver.satisfies(process.version, ">=10");
 
 // enable the should interface with sinon

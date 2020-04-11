@@ -23,6 +23,7 @@
     "release": "release-script",
     "test": "npm run test:ts",
     "test:ts": "mocha",
+    "unused": "organize-imports-cli src/**/*.ts",
     "watch": "tsc --watch"
   },
   "nyc": {
@@ -74,6 +75,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
+    "organize-imports-cli": "^0.7.0",
     "prettier": "^2.0.4",
     "proxyquire": "^2.0.1",
     "rimraf": "^3.0.0",

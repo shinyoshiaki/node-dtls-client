@@ -1,5 +1,4 @@
 ﻿// tslint:disable:class-name
-import { extend } from "../lib/object-polyfill";
 import { CipherSuite } from "../TLS/CipherSuite";
 import { CompressionMethod } from "../TLS/ConnectionState";
 import { Extension } from "../TLS/Extension";
