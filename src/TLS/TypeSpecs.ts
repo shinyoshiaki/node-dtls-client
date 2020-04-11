@@ -1,5 +1,4 @@
-﻿// tslint:disable:ban-types
-import { ISerializable, ISerializableConstructor } from "./Serializable";
+﻿import { ISerializable, ISerializableConstructor } from "./Serializable";
 
 export type Numbers =
   | "uint8"
@@ -9,10 +8,10 @@ export type Numbers =
   | "uint48" // DTLS
   | "uint64";
 
-export interface Number {
+export type Num = {
   type: "number";
   size: Numbers;
-}
+};
 
 export interface Enum {
   type: "enum";
@@ -20,7 +19,7 @@ export interface Enum {
   enumType: any;
 }
 
-export type Primitive = Number | Enum;
+export type Primitive = Num | Enum;
 export function getPrimitiveSize(spec: Primitive): number {
   return +(spec as Primitive).size.substr("uint".length);
 }
@@ -71,7 +70,7 @@ export const define = {
     size,
     enumType,
   }),
-  Number: (size: Numbers): Number => ({ type: "number", size }),
+  Number: (size: Numbers): Num => ({ type: "number", size }),
   Struct: (structType: any): Struct => ({
     type: "struct",
     structType: structType as ISerializableConstructor,
