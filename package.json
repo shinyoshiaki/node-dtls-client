@@ -21,7 +21,9 @@
     "test": "npm run test:ts",
     "test:ts": "mocha",
     "watch": "tsc --watch",
-    "format": "prettier --write src/**/*.ts"
+    "format": "prettier --write src/**/*.ts",
+    "fix": "eslint --fix src/**/*.ts",
+    "lint": "eslint src/**/*.ts"
   },
   "nyc": {
     "all": true,
@@ -61,10 +63,15 @@
     "@types/sinon": "^7.0.11",
     "@types/sinon-chai": "^3.2.2",
     "@types/yargs": "^15.0.0",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "colors": "^1.2.3",
     "coveralls": "^3.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-prettier": "^3.1.2",
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
     "prettier": "^2.0.4",
