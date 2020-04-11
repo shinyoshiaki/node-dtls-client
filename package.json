@@ -17,13 +17,13 @@
   "scripts": {
     "prebuild": "rimraf ./build",
     "build": "tsc",
+    "fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "lint": "eslint src/**/*.ts",
     "release": "release-script",
     "test": "npm run test:ts",
     "test:ts": "mocha",
-    "watch": "tsc --watch",
-    "format": "prettier --write src/**/*.ts",
-    "fix": "eslint --fix src/**/*.ts",
-    "lint": "eslint src/**/*.ts"
+    "watch": "tsc --watch"
   },
   "nyc": {
     "all": true,
