@@ -17,23 +17,25 @@ const debug = debugPackage("node-dtls-client");
  * DTLS-secured UDP socket. Can be used as a drop-in replacement for dgram.Socket
  */
 export class Socket extends EventEmitter {
-  /**
-   * INTERNAL USE, DON'T CALL DIRECTLY. use createSocket instead!
-   */
+  private recordLayer: RecordLayer;
+  private handshakeHandler: ClientHandshakeHandler;
+  private handshakeFinished: boolean = false;
+  private udpConnected: boolean = false;
+  private connectionTimeout?: NodeJS.Timer;
   constructor(private options: Options) {
     super();
     // setup the connection
     this.udp = dgram
       .createSocket(options)
-      .on("listening", this.udp_onListening.bind(this))
+      .on("listening", this.udpOnListening)
       .on("message", this.udp_onMessage.bind(this))
       .on("close", this.udp_onClose.bind(this))
       .on("error", this.udp_onError.bind(this));
 
     // setup a timeout watcher. Default: 1000ms timeout, minimum: 100ms
     this.options.timeout = Math.max(100, this.options.timeout || 1000);
-    this._udpConnected = false;
-    this._connectionTimeout = setTimeout(
+
+    this.connectionTimeout = setTimeout(
       () => this.expectConnection(),
       this.options.timeout
     );
@@ -42,26 +44,18 @@ export class Socket extends EventEmitter {
     this.udp.bind();
   }
 
-  private recordLayer: RecordLayer;
-  private handshakeHandler: ClientHandshakeHandler;
-  private _handshakeFinished: boolean = false;
-  private _udpConnected: boolean;
-  private _connectionTimeout: NodeJS.Timer;
-
   static createSocket(
     options: Options,
     callback?: MessageEventHandler
   ): Socket {
     checkOptions(options);
-    const ret = new Socket(options);
+    const socket = new Socket(options);
 
     // bind "message" event after the handshake is finished
     if (callback != null) {
-      ret.once("connected", () => {
-        ret.on("message", callback);
-      });
+      socket.once("connected", () => socket.on("message", callback));
     }
-    return ret;
+    return socket;
   }
 
   /**
@@ -71,13 +65,13 @@ export class Socket extends EventEmitter {
     if (this._isClosed) {
       throw new Error("The socket is closed. Cannot send data.");
     }
-    if (!this._handshakeFinished) {
+    if (!this.handshakeFinished) {
       throw new Error("DTLS handshake is not finished yet. Cannot send data.");
     }
 
     // send finished data over UDP
     const packet: Message = {
-      type: ContentType.application_data,
+      type: ContentType.applicationData,
       data: data,
     };
 
@@ -105,14 +99,14 @@ export class Socket extends EventEmitter {
 		*/
   private udp: dgram.Socket;
 
-  private udp_onListening() {
+  private udpOnListening = () => {
     // connection successful
-    this._udpConnected = true;
-    if (this._connectionTimeout != null) clearTimeout(this._connectionTimeout);
+    this.udpConnected = true;
+    if (this.connectionTimeout) clearTimeout(this.connectionTimeout);
     // initialize record layer
     this.recordLayer = new RecordLayer(this.udp, this.options);
     // reuse the connection timeout for handshake timeout watching
-    this._connectionTimeout = setTimeout(
+    this.connectionTimeout = setTimeout(
       () => this.expectHandshake(),
       this.options.timeout
     );
@@ -128,9 +122,9 @@ export class Socket extends EventEmitter {
             this.killConnection(err);
           } else {
             // when done, emit "connected" event
-            this._handshakeFinished = true;
-            if (this._connectionTimeout != null)
-              clearTimeout(this._connectionTimeout);
+            this.handshakeFinished = true;
+            if (this.connectionTimeout != null)
+              clearTimeout(this.connectionTimeout);
             this.emit("connected");
             // also emit all buffered messages
             for (const { msg, rinfo } of this.bufferedMessages) {
@@ -147,17 +141,19 @@ export class Socket extends EventEmitter {
         }
       }
     );
-  }
+  };
+
   // is called after the connection timeout expired.
   // Check the connection and throws if it is not established yet
   private expectConnection() {
-    if (!this._isClosed && !this._udpConnected) {
+    if (!this._isClosed && !this.udpConnected) {
       // connection timed out
       this.killConnection(new Error("The connection timed out"));
     }
   }
+
   private expectHandshake() {
-    if (!this._isClosed && !this._handshakeFinished) {
+    if (!this._isClosed && !this.handshakeFinished) {
       // handshake timed out
       this.killConnection(new Error("The DTLS handshake timed out"));
     }
@@ -184,7 +180,7 @@ export class Socket extends EventEmitter {
             .result as FragmentedHandshake;
           this.handshakeHandler.processIncomingMessage(handshake);
           break;
-        case ContentType.change_cipher_spec:
+        case ContentType.changeCipherSpec:
           this.recordLayer.advanceReadEpoch();
           break;
         case ContentType.alert:
@@ -207,8 +203,8 @@ export class Socket extends EventEmitter {
           }
           break;
 
-        case ContentType.application_data:
-          if (!this._handshakeFinished) {
+        case ContentType.applicationData:
+          if (!this.handshakeFinished) {
             // if we are still shaking hands, buffer the message until we're done
             this.bufferedMessages.push({ msg, rinfo });
           } /* finished */ else {
@@ -240,7 +236,7 @@ export class Socket extends EventEmitter {
     if (this._isClosed) return;
 
     this._isClosed = true;
-    if (this._connectionTimeout != null) clearTimeout(this._connectionTimeout);
+    if (this.connectionTimeout != null) clearTimeout(this.connectionTimeout);
     if (this.udp != null) {
       // keep the error handler around or we get spurious ENOTFOUND errors unhandled
       this.udp.removeAllListeners("listening");

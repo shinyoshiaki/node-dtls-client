@@ -254,7 +254,7 @@ export class ClientHandshakeHandler {
       if (handshake.msg_type === Handshake.HandshakeType.finished) {
         // before finished messages, ALWAYS send a ChangeCipherSpec
         this.bufferedOutgoingMessages.push({
-          type: ContentType.change_cipher_spec,
+          type: ContentType.changeCipherSpec,
           data: ChangeCipherSpec.createEmpty().serialize(),
         });
         // TODO: how do we handle retransmission here?

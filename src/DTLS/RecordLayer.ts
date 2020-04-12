@@ -17,12 +17,12 @@ import { DTLSPlaintext } from "./DTLSPlaintext";
 
 const debug = debugPackage("node-dtls-client");
 
-export interface Epoch {
+export type Epoch = {
   index: number;
   connectionState: ConnectionState;
   writeSequenceNumber: number;
   antiReplayWindow: AntiReplayWindow;
-}
+};
 
 export class RecordLayer {
   // TODO: specify connection end
@@ -81,7 +81,7 @@ export class RecordLayer {
     const ret = packet.serialize();
 
     // advance the write epoch, so we use the new params for sending the next messages
-    if (msg.type === ContentType.change_cipher_spec) {
+    if (msg.type === ContentType.changeCipherSpec) {
       this.advanceWriteEpoch();
     }
 
