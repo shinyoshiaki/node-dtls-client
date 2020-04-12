@@ -12,8 +12,8 @@
     "name": "AlCalzone",
     "email": "d.griesel@gmx.net"
   },
-  "main": "./build/dtls.js",
-  "types": "./build/dtls.d.ts",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "scripts": {
     "build": "tsc",
     "ci": "yarn type && yarn lint && yarn test",
