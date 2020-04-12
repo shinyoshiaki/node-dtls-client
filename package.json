@@ -15,40 +15,12 @@
   "main": "./build/dtls.js",
   "types": "./build/dtls.d.ts",
   "scripts": {
-    "prebuild": "rimraf ./build",
     "build": "tsc",
     "fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
     "lint": "eslint src/**/*.ts",
-    "release": "release-script",
-    "test": "npm run test:ts",
-    "test:ts": "mocha",
-    "unused": "organize-imports-cli src/**/*.ts",
-    "watch": "tsc --watch"
-  },
-  "nyc": {
-    "all": true,
-    "exclude": [
-      "build/**",
-      "src/**/*.test.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "instrument": true,
-    "reporter": [
-      "text-summary",
-      "html",
-      "lcov"
-    ],
-    "require": [
-      "ts-node/register",
-      "source-map-support/register"
-    ],
-    "sourceMap": true
+    "test": "mocha",
+    "unused": "organize-imports-cli src/**/*.ts"
   },
   "dependencies": {
     "debug": "^4.1.1",
