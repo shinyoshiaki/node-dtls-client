@@ -1,7 +1,7 @@
 // enable debug output
 import * as debugPackage from "debug";
 import * as dgram from "dgram";
-import { dtls } from "../dtls";
+import { dtls } from "../client";
 import { AntiReplayWindow } from "../TLS/AntiReplayWindow";
 import { ConnectionState } from "../TLS/ConnectionState";
 import { ContentType } from "../TLS/ContentType";

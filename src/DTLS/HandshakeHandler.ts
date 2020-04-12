@@ -1,4 +1,4 @@
-﻿import { dtls } from "../dtls";
+﻿import { dtls } from "../client";
 import { CipherSuites } from "../DTLS/CipherSuites";
 import { Alert, AlertDescription, AlertLevel } from "../TLS/Alert";
 import { ChangeCipherSpec } from "../TLS/ChangeCipherSpec";

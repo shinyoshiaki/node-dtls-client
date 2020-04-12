@@ -429,7 +429,7 @@ export const CipherSuites = {
 };
 
 // define index accessors
-for (const [key, cs] of entries(CipherSuites)) {
+for (const [, cs] of entries(CipherSuites)) {
   if (!CipherSuites.hasOwnProperty("" + cs.id)) {
     (CipherSuites as any)[cs.id] = cs;
   }

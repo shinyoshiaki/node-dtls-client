@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import { dtls } from "../src/dtls";
+import { dtls } from "../src/client";
 import { expect } from "chai";
 
 describe("openssl", () => {

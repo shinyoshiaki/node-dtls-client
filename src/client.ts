@@ -5,7 +5,6 @@ import { FragmentedHandshake } from "./DTLS/Handshake";
 import { ClientHandshakeHandler } from "./DTLS/HandshakeHandler";
 import { RecordLayer } from "./DTLS/RecordLayer";
 import { Alert, AlertDescription, AlertLevel } from "./TLS/Alert";
-import { ChangeCipherSpec } from "./TLS/ChangeCipherSpec";
 import { ContentType } from "./TLS/ContentType";
 import { Message } from "./TLS/Message";
 import { TLSStruct } from "./TLS/TLSStruct";
@@ -99,7 +98,7 @@ export namespace dtls {
     public close(callback?: CloseEventHandler) {
       this.sendAlert(
         new Alert(AlertLevel.warning, AlertDescription.close_notify),
-        (e) => {
+        () => {
           this.udp.close();
           if (callback) this.once("close", callback);
         }

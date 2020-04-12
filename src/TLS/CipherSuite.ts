@@ -169,14 +169,14 @@ export interface KeyMaterial {
 
 /** Creates a dummy cipher which is just an identity operation */
 function createNullCipher(): GenericCipherDelegate {
-  const ret = ((packet: DTLSCompressed, _1, _2) =>
+  const ret: GenericCipherDelegate = ((packet: DTLSCompressed) =>
     new DTLSCiphertext(
       packet.type,
       packet.version,
       packet.epoch,
       packet.sequence_number,
       packet.fragment
-    )) as GenericCipherDelegate;
+    )) as any;
   ret.keyLength = 0;
   ret.fixedIvLength = 0;
   ret.recordIvLength = 0;
@@ -184,14 +184,14 @@ function createNullCipher(): GenericCipherDelegate {
 }
 /** Creates a dummy decipher which is just an identity operation */
 function createNullDecipher(): GenericDecipherDelegate {
-  const ret = ((packet: DTLSCiphertext, _1, _2) =>
+  const ret: GenericDecipherDelegate = ((packet: DTLSCiphertext) =>
     new DTLSCompressed(
       packet.type,
       packet.version,
       packet.epoch,
       packet.sequence_number,
       packet.fragment
-    )) as GenericDecipherDelegate;
+    )) as any;
   ret.keyLength = 0;
   ret.fixedIvLength = 0;
   ret.recordIvLength = 0;
@@ -199,7 +199,7 @@ function createNullDecipher(): GenericDecipherDelegate {
 }
 /** Creates a dummy MAC which just returns an empty Buffer */
 function createNullMAC(): GenericMacDelegate {
-  const ret = ((data, _1, _2) => Buffer.from([])) as GenericMacDelegate;
+  const ret: GenericMacDelegate = (() => Buffer.from([])) as any;
   ret.keyAndHashLength = 0;
   return ret;
 }
