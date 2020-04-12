@@ -96,6 +96,7 @@ export class ClientHandshakeHandler {
       CompressionMethod.null,
     ]);
     hello.extensions = new Vector<Extension>();
+
     this.sendFlight(
       [hello],
       [
@@ -154,16 +155,16 @@ export class ClientHandshakeHandler {
       const lastMsg = this.completeMessages[Math.max(...completeMsgIndizes)];
       if (this.expectedResponses != null) {
         // if we expect a flight and this is the one, call the handler
-        if (this.expectedResponses.indexOf(lastMsg.msg_type) > -1) {
+        if (this.expectedResponses.indexOf(lastMsg.msgType) > -1) {
           this.expectedResponses = null;
           // and remember the seq number
-          this.lastProcessedSeqNum = lastMsg.message_seq;
+          this.lastProcessedSeqNum = lastMsg.messageSeq;
           // call the handler and clear the buffer
           const messages = completeMsgIndizes.map(
             (i) => this.completeMessages[i]
           );
           this.completeMessages = {};
-          if (lastMsg.msg_type === Handshake.HandshakeType.finished) {
+          if (lastMsg.msgType === Handshake.HandshakeType.finished) {
             // for the finished flight, only buffer the finished message AFTER handling it
             this.bufferHandshakeData(
               ...messages
@@ -180,13 +181,13 @@ export class ClientHandshakeHandler {
           }
           // handle the message
           try {
-            this.handle[lastMsg.msg_type](messages);
+            this.handle[lastMsg.msgType](messages);
           } catch (e) {
             this._isHandshaking = false;
             this.finishedCallback(null, e as Error);
             return;
           }
-          if (lastMsg.msg_type === Handshake.HandshakeType.finished) {
+          if (lastMsg.msgType === Handshake.HandshakeType.finished) {
             // for the finished flight, only buffer the finished message AFTER handling it
             this.bufferHandshakeData(lastMsg.toFragment());
           }
@@ -228,9 +229,9 @@ export class ClientHandshakeHandler {
   }
 
   private bufferedOutgoingMessages: Message[] = [];
-  private sendFlight_begin_wasCalled = false;
-  private sendFlight_begin() {
-    this.sendFlight_begin_wasCalled = true;
+  private sendFlightBeginWasCalled = false;
+  private sendFlightBegin() {
+    this.sendFlightBeginWasCalled = true;
     this.lastFlight = [];
   }
 
@@ -239,11 +240,11 @@ export class ClientHandshakeHandler {
    * @param flight - The flight to be sent.
    * @param retransmit - If the flight is retransmitted, i.e. no sequence numbers are increased
    */
-  private sendFlight_processPartial(
+  private sendFlightProcessPartial(
     flight: Handshake.Handshake[],
     retransmit = false
   ) {
-    if (!this.sendFlight_begin_wasCalled) {
+    if (!this.sendFlightBeginWasCalled) {
       throw new Error(
         "Need to call sendFlight_beginPartial() before using this function"
       );
@@ -251,7 +252,7 @@ export class ClientHandshakeHandler {
     this.lastFlight.push(...flight);
 
     flight.forEach((handshake) => {
-      if (handshake.msg_type === Handshake.HandshakeType.finished) {
+      if (handshake.msgType === Handshake.HandshakeType.finished) {
         // before finished messages, ALWAYS send a ChangeCipherSpec
         this.bufferedOutgoingMessages.push({
           type: ContentType.changeCipherSpec,
@@ -262,7 +263,7 @@ export class ClientHandshakeHandler {
 
       if (!retransmit) {
         // for first-time messages, increment the sequence number
-        handshake.message_seq = ++this.lastSentSeqNum;
+        handshake.messageSeq = ++this.lastSentSeqNum;
       }
 
       const fragment = handshake.toFragment();
@@ -282,18 +283,19 @@ export class ClientHandshakeHandler {
       this.bufferedOutgoingMessages.push(...fragments);
     });
   }
+
   /**
    * Sends the currently buffered flight of messages
    * @param flight The flight to be sent.
    * @param expectedResponses The types of possible responses we are expecting.
    * @param retransmit If the flight is retransmitted, i.e. no sequence numbers are increased
    */
-  private sendFlight_finish(expectedResponses: Handshake.HandshakeType[]) {
+  private sendFlightFinish(expectedResponses: Handshake.HandshakeType[]) {
     this.expectedResponses = expectedResponses;
     this.recordLayer.sendFlight(this.bufferedOutgoingMessages);
     // clear the buffers for future use
     this.bufferedOutgoingMessages = [];
-    this.sendFlight_begin_wasCalled = false;
+    this.sendFlightBeginWasCalled = false;
   }
 
   /**
@@ -308,9 +310,9 @@ export class ClientHandshakeHandler {
     retransmit = false
   ) {
     // this is actually just a convenience function for sending complete flights
-    this.sendFlight_begin();
-    this.sendFlight_processPartial(flight, retransmit);
-    this.sendFlight_finish(expectedResponses);
+    this.sendFlightBegin();
+    this.sendFlightProcessPartial(flight, retransmit);
+    this.sendFlightFinish(expectedResponses);
   }
 
   /**
@@ -325,7 +327,7 @@ export class ClientHandshakeHandler {
    * For a given message, check if it needs to be hashed
    */
   private needsToHashMessage(message: Handshake.Handshake): boolean {
-    switch (message.msg_type) {
+    switch (message.msgType) {
       // hello (verify) requests
       case Handshake.HandshakeType.hello_verify_request:
         return false;
@@ -388,7 +390,7 @@ export class ClientHandshakeHandler {
       messages: Handshake.Handshake[]
     ) => {
       for (const msg of messages) {
-        switch (msg.msg_type) {
+        switch (msg.msgType) {
           case Handshake.HandshakeType.server_hello:
             const hello = msg as Handshake.ServerHello;
             // remember the random value
@@ -468,8 +470,8 @@ export class ClientHandshakeHandler {
             connState.computeMasterSecret(preMasterSecret);
 
             // in order to build the finished message, we need to process the partial flight so far
-            this.sendFlight_begin();
-            this.sendFlight_processPartial(flight);
+            this.sendFlightBegin();
+            this.sendFlightProcessPartial(flight);
 
             // now we can compute the verify_data
             const handshake_messages = Buffer.concat(this.allHandshakeData);
@@ -481,10 +483,10 @@ export class ClientHandshakeHandler {
 
             // now build the finished message and process it
             const finished = new Handshake.Finished(verify_data);
-            this.sendFlight_processPartial([finished]);
+            this.sendFlightProcessPartial([finished]);
 
             // finish sending the flight
-            this.sendFlight_finish([Handshake.HandshakeType.finished]);
+            this.sendFlightFinish([Handshake.HandshakeType.finished]);
             break;
         }
       }

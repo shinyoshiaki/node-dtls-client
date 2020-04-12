@@ -27,14 +27,14 @@ export enum HandshakeType {
 
 export abstract class Handshake extends TLSStruct {
   constructor(
-    public msg_type: HandshakeType,
+    public msgType: HandshakeType,
     bodySpec: TypeSpecs.StructSpec,
     initial?: any
   ) {
     super(bodySpec, initial);
   }
 
-  public message_seq: number;
+  public messageSeq: number;
 
   /**
    * Converts this Handshake message into a fragment ready to be sent
@@ -43,9 +43,9 @@ export abstract class Handshake extends TLSStruct {
     // spec only contains the body, so serialize() will only return that
     const body = this.serialize();
     return new FragmentedHandshake(
-      this.msg_type,
+      this.msgType,
       body.length,
-      this.message_seq,
+      this.messageSeq,
       0,
       body
     );
@@ -67,7 +67,7 @@ export abstract class Handshake extends TLSStruct {
       const spec = TypeSpecs.define.Struct(msgClass);
       // parse the body object into a new Handshake instance
       const ret = TLSStruct.from(spec, assembled.fragment).result as Handshake;
-      ret.message_seq = assembled.message_seq;
+      ret.messageSeq = assembled.message_seq;
       return ret;
     } else {
       throw new Error(`unsupported message type ${assembled.msg_type}`);

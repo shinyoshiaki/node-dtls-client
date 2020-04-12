@@ -78,14 +78,14 @@ export class RecordLayer {
     }
 
     // get send buffer
-    const ret = packet.serialize();
+    const buf = packet.serialize();
 
     // advance the write epoch, so we use the new params for sending the next messages
     if (msg.type === ContentType.changeCipherSpec) {
       this.advanceWriteEpoch();
     }
 
-    return ret;
+    return buf;
   }
   /**
    * Sends all messages of a flight in one packet
