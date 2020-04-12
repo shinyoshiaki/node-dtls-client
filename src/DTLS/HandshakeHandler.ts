@@ -143,8 +143,8 @@ export class ClientHandshakeHandler {
     }
     // check if the flight is the current one, and complete
     if (checkFlight) {
-      const completeMsgIndizes = Object.keys(this.completeMessages).map(
-        (k) => +k
+      const completeMsgIndizes = Object.keys(this.completeMessages).map((k) =>
+        Number(k)
       );
       // a flight is complete if it forms a non-interrupted sequence of seq-nums
       const isComplete = [this.lastProcessedSeqNum]
@@ -199,6 +199,7 @@ export class ClientHandshakeHandler {
       }
     }
   }
+
   /**
    * Tries to assemble the fragmented messages in incompleteMessages
    */

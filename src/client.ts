@@ -28,9 +28,9 @@ export class Socket extends EventEmitter {
     this.udp = dgram
       .createSocket(options)
       .on("listening", this.udpOnListening)
-      .on("message", this.udp_onMessage.bind(this))
-      .on("close", this.udp_onClose.bind(this))
-      .on("error", this.udp_onError.bind(this));
+      .on("message", this.udpOnMessage.bind(this))
+      .on("close", this.udpOnClose.bind(this))
+      .on("error", this.udpOnError.bind(this));
 
     // setup a timeout watcher. Default: 1000ms timeout, minimum: 100ms
     this.options.timeout = Math.max(100, this.options.timeout || 1000);
@@ -168,7 +168,7 @@ export class Socket extends EventEmitter {
     this.recordLayer.send(packet, callback);
   }
 
-  private udp_onMessage(udpMsg: Buffer, rinfo: dgram.RemoteInfo) {
+  private udpOnMessage(udpMsg: Buffer, rinfo: dgram.RemoteInfo) {
     // decode the messages
     const messages = this.recordLayer.receive(udpMsg);
 
@@ -202,7 +202,6 @@ export class Socket extends EventEmitter {
             }
           }
           break;
-
         case ContentType.applicationData:
           if (!this.handshakeFinished) {
             // if we are still shaking hands, buffer the message until we're done
@@ -219,7 +218,7 @@ export class Socket extends EventEmitter {
   }
 
   private _isClosed: boolean = false;
-  private udp_onClose() {
+  private udpOnClose() {
     // we no longer want to receive events
     this.udp.removeAllListeners();
     if (!this._isClosed) {
@@ -227,7 +226,7 @@ export class Socket extends EventEmitter {
       this.emit("close");
     }
   }
-  private udp_onError(exception: Error) {
+  private udpOnError(exception: Error) {
     this.killConnection(exception);
   }
 
