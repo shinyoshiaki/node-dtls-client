@@ -411,16 +411,16 @@ export class ClientHandshakeHandler {
             break;
           // TODO: support more messages (certificates etc.)
           case Handshake.HandshakeType.server_key_exchange:
-            const srvKeyExchange = msg as Handshake.ServerKeyExchange;
+            // const srvKeyExchange = msg as Handshake.ServerKeyExchange;
             // parse the content depending on the key exchange algorithm
             switch (
               this.recordLayer.nextEpoch.connectionState.cipherSuite.keyExchange
             ) {
               case "psk":
-                const srvKeyExchange_PSK = Handshake.ServerKeyExchange_PSK.from(
-                  Handshake.ServerKeyExchange_PSK.spec,
-                  srvKeyExchange.raw_data
-                ).result;
+                // const srvKeyExchange_PSK = Handshake.ServerKeyExchange_PSK.from(
+                //   Handshake.ServerKeyExchange_PSK.spec,
+                //   srvKeyExchange.raw_data
+                // ).result;
                 // TODO: do something with the identity hint
                 break;
               // TODO: support other algorithms

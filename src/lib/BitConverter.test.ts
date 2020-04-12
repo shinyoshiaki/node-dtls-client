@@ -3,7 +3,6 @@ import { bufferToNumber, numberToBuffer } from "./BitConverter";
 
 const msg_data_mismatch =
   "Daten stimmen nicht mit dem erwarteten Ergebnis überein";
-const msg_delta_mismatch = "Delta stimmt nicht mit dem erwarteten Wert überein";
 
 describe("BitConverter Number Tests =>", () => {
   it("uint8 read 1", () => {

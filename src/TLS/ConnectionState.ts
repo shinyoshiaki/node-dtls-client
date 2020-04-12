@@ -21,8 +21,6 @@ export namespace CompressionMethod {
 export type ConnectionEnd = "server" | "client";
 
 const master_secret_length = 48;
-const client_random_length = 32;
-const server_random_length = 32;
 
 export class ConnectionState {
   // This doesn't seem to be used:

@@ -1,5 +1,4 @@
-﻿// tslint:disable:class-name
-import { CipherSuite } from "../TLS/CipherSuite";
+﻿import { CipherSuite } from "../TLS/CipherSuite";
 import { CompressionMethod } from "../TLS/ConnectionState";
 import { Extension } from "../TLS/Extension";
 import { ProtocolVersion } from "../TLS/ProtocolVersion";
@@ -163,7 +162,6 @@ export class FragmentedHandshake extends TLSStruct {
     if (!(fragments && fragments.length)) return false;
     FragmentedHandshake.enforceSingleMessage(fragments);
 
-    const firstSeqNum = fragments[0].message_seq;
     const totalLength = fragments[0].total_length;
     const ranges = fragments
       // map to fragment range (start and end index)
