@@ -1,6 +1,6 @@
 import { expect, should, use } from "chai";
 import * as sinonChai from "sinon-chai";
-import { dtls } from "./client";
+import * as dtls from "./client";
 
 // enable the should interface with sinon
 should();
@@ -34,7 +34,7 @@ describe("dtls.createSocket() => ", () => {
       { type: "udp4", address: "localhost", port: 1234, psk: 123 },
     ];
     for (const opts of faultyOptions) {
-      expect(() => dtls.createSocket(opts as dtls.Options)).to.throw(
+      expect(() => dtls.Socket.createSocket(opts as dtls.Options)).to.throw(
         "connection options"
       );
     }

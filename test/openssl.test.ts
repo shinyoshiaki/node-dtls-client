@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import { dtls } from "../src/client";
+import * as dtls from "../src/client";
 import { expect } from "chai";
 
 describe("openssl", () => {
@@ -26,13 +26,12 @@ describe("openssl", () => {
       }
     });
     setTimeout(() => {
-      const socket = dtls
-        .createSocket({
-          type: "udp4",
-          address: "127.0.0.1",
-          port: 5685,
-          psk: { Client_identity: "X9LStOPeYT3UZu5w" },
-        })
+      const socket = dtls.Socket.createSocket({
+        type: "udp4",
+        address: "127.0.0.1",
+        port: 5685,
+        psk: { Client_identity: "X9LStOPeYT3UZu5w" },
+      })
         .on("connected", () => {
           socket.send(new Buffer("### node->openssl\n"));
         })
