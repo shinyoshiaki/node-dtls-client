@@ -29,6 +29,7 @@
     "@typescript-eslint/explicit-function-return-type": 0,
     "no-inner-declarations": 0,
     "@typescript-eslint/interface-name-prefix": 0,
-    "@typescript-eslint/class-name-casing": 0
+    "@typescript-eslint/class-name-casing": 0,
+    "@typescript-eslint/no-var-requires": 0
   }
 }
