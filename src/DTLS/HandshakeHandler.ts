@@ -14,6 +14,7 @@ import { Vector } from "../TLS/Vector";
 import * as Handshake from "./Handshake";
 import { RecordLayer } from "./RecordLayer";
 import * as forge from "node-forge";
+import { parseMessage } from "./packets";
 const {
   decode,
   types: { uint24be, buffer, array },
@@ -147,9 +148,7 @@ export class ClientHandshakeHandler {
       checkFlight = this.tryAssembleFragments(msg);
     } else {
       // the message is already complete, we only need to parse it
-      this.completeMessages[msg.message_seq] = Handshake.Handshake.fromFragment(
-        msg
-      );
+      this.completeMessages[msg.message_seq] = parseMessage(msg);
       if (msg.msg_type === 11) {
         const test = decode(msg.fragment, Certificate);
         console.log(test);
@@ -408,9 +407,10 @@ export class ClientHandshakeHandler {
       for (const msg of messages) {
         switch (msg.msgType) {
           case Handshake.HandshakeType.server_hello:
-            const hello = msg as Handshake.ServerHello;
+            const hello = msg as any;
             // remember the random value
-            this.recordLayer.nextEpoch.connectionState.server_random = hello.random.serialize();
+            this.recordLayer.nextEpoch.connectionState.server_random =
+              hello.random;
             // set the cipher suite and compression method to be used
             this.recordLayer.nextEpoch.connectionState.cipherSuite = (CipherSuites as any)[
               hello.cipher_suite

@@ -33,7 +33,8 @@ setTimeout(() => {
     .on("connected", () => {
       socket.send(new Buffer("### node->openssl\n"));
     })
-    .on("message", () => {
+    .on("message", (msg) => {
+      console.log("success", msg.toString());
       server.kill();
       socket.close();
     });
