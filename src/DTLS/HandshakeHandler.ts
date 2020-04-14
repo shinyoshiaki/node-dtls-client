@@ -13,6 +13,17 @@ import { Random } from "../TLS/Random";
 import { Vector } from "../TLS/Vector";
 import * as Handshake from "./Handshake";
 import { RecordLayer } from "./RecordLayer";
+import * as forge from "node-forge";
+const {
+  decode,
+  types: { uint24be, buffer, array },
+} = require("binary-data");
+
+const ASN11Cert = buffer(uint24be);
+
+const Certificate = {
+  certificateList: array(ASN11Cert, uint24be, "bytes"),
+};
 
 // TODO
 ///// **
@@ -139,6 +150,10 @@ export class ClientHandshakeHandler {
       this.completeMessages[msg.message_seq] = Handshake.Handshake.fromFragment(
         msg
       );
+      if (msg.msg_type === 11) {
+        const test = decode(msg.fragment, Certificate);
+        console.log(test);
+      }
       checkFlight = true;
     }
     // check if the flight is the current one, and complete
@@ -337,7 +352,7 @@ export class ClientHandshakeHandler {
       // client hello without cookie (TODO only if verify request is used)
       case Handshake.HandshakeType.client_hello:
         const cookie = (message as Handshake.ClientHello).cookie;
-        return cookie != null && cookie.length > 0;
+        return cookie?.length > 0;
       // everything else will be hashed
       default:
         return true;
@@ -410,6 +425,13 @@ export class ClientHandshakeHandler {
             // TODO: remember the session id?
             break;
           // TODO: support more messages (certificates etc.)
+          case Handshake.HandshakeType.certificate:
+            const cert = msg as Handshake.Certificate;
+            const { items } = cert.certificateList;
+            const buf = items[0].extension_data;
+            const str = buf.toString();
+            console.log(str);
+            break;
           case Handshake.HandshakeType.server_key_exchange:
             // const srvKeyExchange = msg as Handshake.ServerKeyExchange;
             // parse the content depending on the key exchange algorithm

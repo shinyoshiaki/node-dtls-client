@@ -4,6 +4,7 @@ const socket = dtls.Socket.createSocket({
   address: "127.0.0.1",
   port: 4433,
   psk: { Client_identity: "X9LStOPeYT3UZu5w" },
+  timeout: 60 * 1000 * 60,
 })
   .on("connected", () => {
     socket.send(new Buffer("### node->openssl\n"));

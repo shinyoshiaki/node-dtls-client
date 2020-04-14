@@ -65,9 +65,10 @@ export abstract class Handshake extends TLSStruct {
       // turn it into the correct type
       const spec = TypeSpecs.define.Struct(msgClass);
       // parse the body object into a new Handshake instance
-      const ret = TLSStruct.from(spec, assembled.fragment).result as Handshake;
-      ret.messageSeq = assembled.message_seq;
-      return ret;
+      const handshake = TLSStruct.from(spec, assembled.fragment)
+        .result as Handshake;
+      handshake.messageSeq = assembled.message_seq;
+      return handshake;
     } else {
       throw new Error(`unsupported message type ${assembled.msg_type}`);
     }
@@ -341,6 +342,21 @@ export class ServerHello extends Handshake {
   }
 }
 
+export class Certificate extends Handshake {
+  static readonly __spec = {
+    certificateList: TypeSpecs.define.Vector(Extension.spec, 0, 2 ** 24 - 1),
+  };
+
+  // specからコンストラクタ引数が自動生成される
+  constructor(public certificateList: Vector<Extension>) {
+    super(HandshakeType.certificate, Certificate.__spec);
+  }
+
+  static createEmpty() {
+    return new Certificate(undefined);
+  }
+}
+
 export class HelloVerifyRequest extends Handshake {
   public static readonly __spec = {
     server_version: TypeSpecs.define.Struct(ProtocolVersion),
@@ -454,3 +470,4 @@ HandshakeMessages[HandshakeType.server_hello] = ServerHello;
 HandshakeMessages[HandshakeType.hello_verify_request] = HelloVerifyRequest;
 HandshakeMessages[HandshakeType.server_hello_done] = ServerHelloDone;
 HandshakeMessages[HandshakeType.finished] = Finished;
+HandshakeMessages[HandshakeType.certificate] = Certificate;

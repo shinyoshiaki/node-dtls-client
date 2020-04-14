@@ -108,8 +108,8 @@ export class TLSStruct {
     buf: Buffer,
     offset?: number
   ): DeserializationResult<TLSStruct> {
-    const ret = spec.structType.createEmpty() as TLSStruct;
-    return { result: ret, readBytes: ret.deserialize(buf, offset) };
+    const packet = spec.structType.createEmpty() as TLSStruct;
+    return { result: packet, readBytes: packet.deserialize(buf, offset) };
   }
 
   /**
