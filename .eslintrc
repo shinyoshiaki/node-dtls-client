@@ -17,6 +17,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "no-empty": 0,
     "@typescript-eslint/no-inferrable-types": 0,
     "@typescript-eslint/ban-ts-ignore": 0,
     "@typescript-eslint/camelcase": 0,

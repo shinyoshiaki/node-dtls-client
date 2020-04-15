@@ -1,6 +1,5 @@
 import { spawn } from "child_process";
 import * as dtls from "../src/client";
-import { expect } from "chai";
 
 describe("openssl", () => {
   it("openssl_server", (done) => {
@@ -36,7 +35,7 @@ describe("openssl", () => {
           socket.send(new Buffer("### node->openssl\n"));
         })
         .on("message", (msg) => {
-          expect(msg).deep.equal(new Buffer("### openssl->node\n"));
+          expect(msg).toEqual(new Buffer("### openssl->node\n"));
           server.kill();
           socket.close();
           done();

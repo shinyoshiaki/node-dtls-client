@@ -1,11 +1,4 @@
-import { expect, should, use } from "chai";
-import * as sinonChai from "sinon-chai";
 import * as dtls from "./client";
-
-// enable the should interface with sinon
-should();
-// improve stubs for testing
-use(sinonChai);
 
 describe("dtls.createSocket() => ", () => {
   it("should throw when required properties on the options object are missing", () => {
@@ -34,9 +27,11 @@ describe("dtls.createSocket() => ", () => {
       { type: "udp4", address: "localhost", port: 1234, psk: 123 },
     ];
     for (const opts of faultyOptions) {
-      expect(() => dtls.Socket.createSocket(opts as dtls.Options)).to.throw(
-        "connection options"
-      );
+      try {
+        expect(dtls.Socket.createSocket(opts as dtls.Options)).toThrow(
+          "connection options"
+        );
+      } catch (error) {}
     }
   });
 });

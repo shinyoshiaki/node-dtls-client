@@ -1,11 +1,7 @@
 import * as Handshake from "../Handshake";
 import { ProtocolVersion } from "../../TLS/ProtocolVersion";
-
-const {
-  decode,
-  encode,
-  types: { uint16be, buffer, uint8 },
-} = require("binary-data");
+import { ServerHello } from "./server/hello";
+import { decode } from "binary-data";
 
 export function parseMessage(msg: Handshake.FragmentedHandshake) {
   switch (msg.msg_type) {
@@ -32,50 +28,5 @@ export function parseMessage(msg: Handshake.FragmentedHandshake) {
     default:
       const handshake = Handshake.Handshake.fromFragment(msg);
       return handshake;
-  }
-}
-
-class ServerHello {
-  msgType = Handshake.HandshakeType.server_hello;
-  messageSeq: number;
-  public static readonly spec = {
-    server_version: { major: uint8, minor: uint8 },
-    random: buffer(32),
-    session_id: buffer(uint8),
-    cipher_suite: uint16be,
-    compression_method: uint8,
-  };
-
-  constructor(
-    public server_version: any,
-    public random: any,
-    public session_id: Buffer,
-    public cipher_suite: number,
-    public compression_method: number
-  ) {}
-
-  static createEmpty() {
-    return new ServerHello(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined
-    );
-  }
-
-  private serialize() {
-    return Buffer.from(encode(this, ServerHello.spec).slice());
-  }
-
-  toFragment() {
-    const body = this.serialize();
-    return new Handshake.FragmentedHandshake(
-      this.msgType,
-      body.length,
-      this.messageSeq,
-      0,
-      body
-    );
   }
 }

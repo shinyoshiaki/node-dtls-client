@@ -1,5 +1,4 @@
-﻿import { expect } from "chai";
-import { bufferToNumber, numberToBuffer } from "./BitConverter";
+﻿import { bufferToNumber, numberToBuffer } from "./BitConverter";
 
 const msg_data_mismatch =
   "Daten stimmen nicht mit dem erwarteten Ergebnis überein";
@@ -10,7 +9,7 @@ describe("BitConverter Number Tests =>", () => {
     const expected = 0xfe;
     const output = bufferToNumber(input, 8);
 
-    expect(output).to.equal(expected, msg_data_mismatch);
+    expect(output).toEqual(expected);
   });
 
   it("uint8 read 2", () => {
@@ -18,7 +17,7 @@ describe("BitConverter Number Tests =>", () => {
     const expected = 0xfe;
     const output = bufferToNumber(input, 8, 1);
 
-    expect(output).to.equal(expected, msg_data_mismatch);
+    expect(output).toEqual(expected);
   });
 
   it("uint8 write", () => {
@@ -26,7 +25,7 @@ describe("BitConverter Number Tests =>", () => {
     const expected = Buffer.from([0xfe]);
     const output = numberToBuffer(input, 8);
 
-    expect(output).to.deep.equal(expected, msg_data_mismatch);
+    expect(output).toEqual(expected);
   });
 
   it("uint24 read 1", () => {
@@ -34,7 +33,7 @@ describe("BitConverter Number Tests =>", () => {
     const expected = 0xfefdfc;
     const output = bufferToNumber(input, 24);
 
-    expect(output).to.equal(expected, msg_data_mismatch);
+    expect(output).toEqual(expected);
   });
 
   it("uint24 read 2", () => {
@@ -42,7 +41,7 @@ describe("BitConverter Number Tests =>", () => {
     const expected = 0xfefdfc;
     const output = bufferToNumber(input, 24, 1);
 
-    expect(output).to.equal(expected, msg_data_mismatch);
+    expect(output).toEqual(expected);
   });
 
   it("uint24 write", () => {
@@ -50,7 +49,7 @@ describe("BitConverter Number Tests =>", () => {
     const expected = Buffer.from([0xfe, 0xfd, 0xfc]);
     const output = numberToBuffer(input, 24);
 
-    expect(output).to.deep.equal(expected, msg_data_mismatch);
+    expect(output).toEqual(expected);
   });
 
   // 	it('uint8 write 2', () => {

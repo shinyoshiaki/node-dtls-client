@@ -15,10 +15,8 @@ import * as Handshake from "./Handshake";
 import { RecordLayer } from "./RecordLayer";
 import * as forge from "node-forge";
 import { parseMessage } from "./packets";
-const {
-  decode,
-  types: { uint24be, buffer, array },
-} = require("binary-data");
+import { decode, types } from "binary-data";
+const { uint24be, buffer, array } = types;
 
 const ASN11Cert = buffer(uint24be);
 
