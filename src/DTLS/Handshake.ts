@@ -438,8 +438,7 @@ export class Finished extends Handshake {
 export const HandshakeMessages: {
   [type: number]: { __spec: any };
 } = {};
-HandshakeMessages[HandshakeType.hello_request] = HelloRequest;
-HandshakeMessages[HandshakeType.client_hello] = ClientHello;
+
 HandshakeMessages[HandshakeType.hello_verify_request] = HelloVerifyRequest;
 HandshakeMessages[HandshakeType.server_hello_done] = ServerHelloDone;
 HandshakeMessages[HandshakeType.finished] = Finished;

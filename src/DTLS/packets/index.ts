@@ -3,12 +3,16 @@ import { ProtocolVersion } from "../../TLS/ProtocolVersion";
 import { ServerHello } from "./server/hello";
 import { decode } from "binary-data";
 import { Certificate } from "./certificate";
+import { HelloRequest } from "./helloRequest";
+import { ClientHello } from "./client/hello";
 
 const handlers: {
   [key in keyof typeof Handshake.HandshakeType]: any;
 } = {} as any;
 handlers[Handshake.HandshakeType.server_hello] = ServerHello;
 handlers[Handshake.HandshakeType.certificate] = Certificate;
+handlers[Handshake.HandshakeType.hello_request] = HelloRequest;
+handlers[Handshake.HandshakeType.client_hello] = ClientHello;
 
 export function parseMessage(msg: Handshake.FragmentedHandshake) {
   const Handler = handlers[msg.msg_type];
@@ -33,6 +37,9 @@ export function parseMessage(msg: Handshake.FragmentedHandshake) {
     case Handshake.HandshakeType.certificate: {
       const certificate: Certificate = handshake;
       return certificate as any;
+    }
+    default: {
+      return handshake;
     }
   }
 }
