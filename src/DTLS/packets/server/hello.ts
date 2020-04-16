@@ -1,11 +1,12 @@
 import { HandshakeType, FragmentedHandshake } from "../../Handshake";
 import { encode, types } from "binary-data";
+import { Packet } from "../packet";
 const { uint16be, buffer, uint8 } = types;
 
-export class ServerHello {
+export class ServerHello implements Packet {
   msgType = HandshakeType.server_hello;
   messageSeq: number;
-  public static readonly spec = {
+  static readonly spec = {
     server_version: { major: uint8, minor: uint8 },
     random: buffer(32),
     session_id: buffer(uint8),

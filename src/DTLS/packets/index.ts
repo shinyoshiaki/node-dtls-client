@@ -2,31 +2,37 @@ import * as Handshake from "../Handshake";
 import { ProtocolVersion } from "../../TLS/ProtocolVersion";
 import { ServerHello } from "./server/hello";
 import { decode } from "binary-data";
+import { Certificate } from "./certificate";
+
+const handlers: {
+  [key in keyof typeof Handshake.HandshakeType]: any;
+} = {} as any;
+handlers[Handshake.HandshakeType.server_hello] = ServerHello;
+handlers[Handshake.HandshakeType.certificate] = Certificate;
 
 export function parseMessage(msg: Handshake.FragmentedHandshake) {
+  const Handler = handlers[msg.msg_type];
+  if (!Handler) {
+    const handshake = Handshake.Handshake.fromFragment(msg);
+    return handshake;
+  }
+  const fragment = decode(msg.fragment, Handler.spec);
+  const handshake = new Handler(...Object.values(fragment));
+  handshake.messageSeq = msg.message_seq;
+
   switch (msg.msg_type) {
     case Handshake.HandshakeType.server_hello: {
-      const {
-        server_version,
-        random,
-        session_id,
-        cipher_suite,
-        compression_method,
-      } = decode(msg.fragment, ServerHello.spec);
-      const serverHello = ServerHello.createEmpty();
-      const protocolVersion = ProtocolVersion.createEmpty();
-      protocolVersion.major = server_version.major;
-      protocolVersion.minor = server_version.minor;
+      const serverHello: ServerHello = handshake;
+      const protocolVersion = new ProtocolVersion(
+        fragment.server_version.major,
+        fragment.server_version.minor
+      );
       serverHello.server_version = protocolVersion;
-      serverHello.random = random;
-      serverHello.session_id = session_id;
-      serverHello.cipher_suite = cipher_suite;
-      serverHello.compression_method = compression_method;
-      serverHello.messageSeq = msg.message_seq;
       return serverHello as any;
     }
-    default:
-      const handshake = Handshake.Handshake.fromFragment(msg);
-      return handshake;
+    case Handshake.HandshakeType.certificate: {
+      const certificate: Certificate = handshake;
+      return certificate as any;
+    }
   }
 }

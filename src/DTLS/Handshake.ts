@@ -316,32 +316,6 @@ export class ClientHello extends Handshake {
   }
 }
 
-export class ServerHello extends Handshake {
-  public static readonly __spec = {
-    server_version: TypeSpecs.define.Struct(ProtocolVersion),
-    random: TypeSpecs.define.Struct(Random),
-    session_id: SessionID.spec,
-    cipher_suite: CipherSuite.__spec.id,
-    compression_method: CompressionMethod.spec,
-    extensions: TypeSpecs.define.Vector(Extension.spec, 0, 2 ** 16 - 1, true),
-  };
-
-  constructor(
-    public server_version: ProtocolVersion,
-    public random: Random,
-    public session_id: Buffer,
-    public cipher_suite: number,
-    public compression_method: CompressionMethod,
-    public extensions: Vector<Extension>
-  ) {
-    super(HandshakeType.server_hello, ServerHello.__spec);
-  }
-
-  public static createEmpty(): ServerHello {
-    return new ServerHello(null, null, null, null, null, null);
-  }
-}
-
 export class Certificate extends Handshake {
   static readonly __spec = {
     certificateList: TypeSpecs.define.Vector(Extension.spec, 0, 2 ** 24 - 1),
@@ -466,7 +440,6 @@ export const HandshakeMessages: {
 } = {};
 HandshakeMessages[HandshakeType.hello_request] = HelloRequest;
 HandshakeMessages[HandshakeType.client_hello] = ClientHello;
-HandshakeMessages[HandshakeType.server_hello] = ServerHello;
 HandshakeMessages[HandshakeType.hello_verify_request] = HelloVerifyRequest;
 HandshakeMessages[HandshakeType.server_hello_done] = ServerHelloDone;
 HandshakeMessages[HandshakeType.finished] = Finished;

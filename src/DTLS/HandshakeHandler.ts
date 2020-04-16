@@ -15,14 +15,7 @@ import * as Handshake from "./Handshake";
 import { RecordLayer } from "./RecordLayer";
 import * as forge from "node-forge";
 import { parseMessage } from "./packets";
-import { decode, types } from "binary-data";
-const { uint24be, buffer, array } = types;
-
-const ASN11Cert = buffer(uint24be);
-
-const Certificate = {
-  certificateList: array(ASN11Cert, uint24be, "bytes"),
-};
+import { Certificate } from "./packets/certificate";
 
 // TODO
 ///// **
@@ -147,10 +140,6 @@ export class ClientHandshakeHandler {
     } else {
       // the message is already complete, we only need to parse it
       this.completeMessages[msg.message_seq] = parseMessage(msg);
-      if (msg.msg_type === 11) {
-        const test = decode(msg.fragment, Certificate);
-        console.log(test);
-      }
       checkFlight = true;
     }
     // check if the flight is the current one, and complete
@@ -380,6 +369,7 @@ export class ClientHandshakeHandler {
     return verify_data;
   }
 
+  certificate: Buffer;
   /**
    * handles server messages
    */
@@ -424,11 +414,9 @@ export class ClientHandshakeHandler {
             break;
           // TODO: support more messages (certificates etc.)
           case Handshake.HandshakeType.certificate:
-            const cert = msg as Handshake.Certificate;
-            const { items } = cert.certificateList;
-            const buf = items[0].extension_data;
-            const str = buf.toString();
-            console.log(str);
+            const cert: Certificate = msg as any;
+            this.certificate = cert.certificateList[0];
+            console.log(cert);
             break;
           case Handshake.HandshakeType.server_key_exchange:
             // const srvKeyExchange = msg as Handshake.ServerKeyExchange;
@@ -457,33 +445,43 @@ export class ClientHandshakeHandler {
             const flight: Handshake.Handshake[] = [];
             switch (connState.cipherSuite.keyExchange) {
               case "psk":
-                // for PSK, build the key exchange message
-                const clKeyExchange = Handshake.ClientKeyExchange.createEmpty();
-                const clKeyExchange_PSK = new Handshake.ClientKeyExchange_PSK(
-                  Buffer.from(psk_identity, "ascii")
-                );
-                clKeyExchange.raw_data = clKeyExchange_PSK.serialize();
-                // and add it to the flight
-                flight.push(clKeyExchange);
+                {
+                  // for PSK, build the key exchange message
+                  const clKeyExchange = Handshake.ClientKeyExchange.createEmpty();
+                  const clKeyExchange_PSK = new Handshake.ClientKeyExchange_PSK(
+                    Buffer.from(psk_identity, "ascii")
+                  );
+                  clKeyExchange.raw_data = clKeyExchange_PSK.serialize();
+                  // and add it to the flight
+                  flight.push(clKeyExchange);
 
-                // now we have everything, construct the pre master secret
-                const psk = Buffer.from(
-                  this.options.psk[psk_identity],
-                  "ascii"
-                );
-                preMasterSecret = new PreMasterSecret(null, psk);
+                  // now we have everything, construct the pre master secret
+                  const psk = Buffer.from(
+                    this.options.psk[psk_identity],
+                    "ascii"
+                  );
+                  preMasterSecret = new PreMasterSecret(null, psk);
+                }
+                break;
+              case "rsa":
+                {
+                  // TODO impl
+                  console.log();
+                }
                 break;
 
               default:
-                this.finishedCallback(
-                  new Alert(
-                    AlertLevel.fatal,
-                    AlertDescription.handshake_failure
-                  ),
-                  new Error(
-                    `${connState.cipherSuite.keyExchange} key exchange not implemented`
-                  )
-                );
+                {
+                  this.finishedCallback(
+                    new Alert(
+                      AlertLevel.fatal,
+                      AlertDescription.handshake_failure
+                    ),
+                    new Error(
+                      `${connState.cipherSuite.keyExchange} key exchange not implemented`
+                    )
+                  );
+                }
                 return;
             }
 
