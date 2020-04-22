@@ -23,15 +23,6 @@ export type ConnectionEnd = "server" | "client";
 const master_secret_length = 48;
 
 export class ConnectionState {
-  // This doesn't seem to be used:
-  // constructor(values?: Partial<ConnectionState>) {
-  // 	if (values) {
-  // 		for (const [key, value] of entries(values)) {
-  // 			if (this.hasOwnProperty(key)) (this as any)[key] = value;
-  // 		}
-  // 	}
-  // }
-
   public entity: ConnectionEnd = "client";
   public cipherSuite: CipherSuite = CipherSuites.TLS_NULL_WITH_NULL_NULL;
   public protocolVersion: ProtocolVersion = new ProtocolVersion(~1, ~0); // default to DTLSv1.0 during handshakes
