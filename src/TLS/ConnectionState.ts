@@ -59,9 +59,9 @@ export class ConnectionState {
    * @param clientHelloRandom - The random data from the client hello message
    * @param serverHelloRandom - The random data from the server hello message
    */
-  public computeMasterSecret(preMasterSecret: PreMasterSecret): void {
+  public computeMasterSecret(preMasterSecret: Buffer): void {
     this.master_secret = PRF[this.cipherSuite.prfAlgorithm](
-      preMasterSecret.serialize(),
+      preMasterSecret,
       "master secret",
       Buffer.concat([this.client_random, this.server_random]),
       master_secret_length

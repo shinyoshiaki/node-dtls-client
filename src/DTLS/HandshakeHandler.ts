@@ -13,9 +13,9 @@ import { Random } from "../TLS/Random";
 import { Vector } from "../TLS/Vector";
 import * as Handshake from "./Handshake";
 import { RecordLayer } from "./RecordLayer";
-import * as forge from "node-forge";
 import { parseMessage } from "./packets";
 import { Certificate } from "./packets/certificate";
+import { randomBytes } from "crypto";
 
 // TODO
 ///// **
@@ -440,7 +440,7 @@ export class ClientHandshakeHandler {
 
             // TODO: support multiple identities
             const psk_identity = Object.keys(this.options.psk)[0];
-            let preMasterSecret: PreMasterSecret;
+            let preMasterSecret: Buffer;
 
             const flight: Handshake.Handshake[] = [];
             switch (connState.cipherSuite.keyExchange) {
@@ -460,16 +460,19 @@ export class ClientHandshakeHandler {
                     this.options.psk[psk_identity],
                     "ascii"
                   );
-                  preMasterSecret = new PreMasterSecret(null, psk);
+                  preMasterSecret = new PreMasterSecret(null, psk).serialize();
                 }
                 break;
               case "rsa":
                 {
+                  const preMasterKey = Buffer.concat([
+                    connState.protocolVersion.serialize(),
+                    randomBytes(46),
+                  ]);
                   // TODO impl
                   console.log();
                 }
                 break;
-
               default:
                 {
                   this.finishedCallback(
